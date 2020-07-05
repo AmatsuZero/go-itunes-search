@@ -1,11 +1,11 @@
 package itunes_search
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
-	"encoding/json"
 )
 
 /**************************************************************
@@ -14,8 +14,8 @@ import (
 
 // iTunesResult represent iTunes response outer most structure
 type iTunesResult struct {
-	ResultCount int         `json:"resultCount"`
-	Results     []Entry     `json:"results"`
+	ResultCount int     `json:"resultCount"`
+	Results     []Entry `json:"results"`
 }
 
 // Params holds iTunes API params.

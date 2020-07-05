@@ -1,8 +1,8 @@
 package itunes_search
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"text/template"
 )
 
@@ -115,8 +115,8 @@ ReleaseNotes:
 var entryTmpl, _ = template.New("entry").Parse(entryTemplateStr)
 
 // Entry_Print will print human-readable entry
-func (self *Entry) Print() {
-	if err := entryTmpl.Execute(os.Stdout, self); err != nil {
+func (e *Entry) Print() {
+	if err := entryTmpl.Execute(os.Stdout, e); err != nil {
 		fmt.Println(err.Error())
 	}
 	return

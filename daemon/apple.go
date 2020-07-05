@@ -1,18 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"time"
 	"bytes"
-	"strconv"
-)
-
-import (
+	"fmt"
 	"github.com/go-pg/pg"
-	"github.com/Vonng/go-itunes-search/app"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
+	"go-itunes-search/app"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // ID type indicator
@@ -35,7 +32,7 @@ func NewMessage(msg string) (m Message) {
 		return
 	}
 
-	m.Type, m.ID = msg[0], string(msg[1:])
+	m.Type, m.ID = msg[0], msg[1:]
 	if m.Type == TypeITunesID || m.Type == TypeBundleID || m.Type == TypeKeywords {
 		return
 	} else {

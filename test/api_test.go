@@ -1,13 +1,14 @@
-package itunes_search
+package test
 
 import (
+	"go-itunes-search"
 	"testing"
 )
 
 // Simplest search example
 func TestSearch(t *testing.T) {
-	res, _ := Search([]string{"Hello", "World"}).
-		Country(US).App().Limit(5).Results()
+	res, _ := itunes_search.Search([]string{"Hello", "World"}).
+		Country(itunes_search.US).App().Limit(5).Results()
 
 	for _, r := range res {
 		r.Print()
@@ -16,10 +17,9 @@ func TestSearch(t *testing.T) {
 
 // Simplest lookup example
 func TestLookup(t *testing.T) {
-	res, _ := Lookup().ID(989673964).Result()
+	res, _ := itunes_search.Lookup().ID(989673964).Result()
 	res.Print()
 }
-
 
 func TestLookupCNStoreByiTunesID(t *testing.T) {
 	testCase := []struct {
@@ -33,7 +33,7 @@ func TestLookupCNStoreByiTunesID(t *testing.T) {
 	}
 
 	for _, c := range testCase {
-		if res, err := Lookup().ID(c.ID).Result(); err != nil {
+		if res, err := itunes_search.Lookup().ID(c.ID).Result(); err != nil {
 			t.Error(err)
 		} else {
 			// res.Print()
@@ -56,7 +56,7 @@ func TestLookupCNAppByBundleID(t *testing.T) {
 	}
 
 	for _, c := range testCase {
-		if res, err := Lookup().BundleID(c.BundleID).Country(CN).Result(); err != nil {
+		if res, err := itunes_search.Lookup().BundleID(c.BundleID).Country(itunes_search.CN).Result(); err != nil {
 			t.Error(err)
 		} else {
 			// res.Print()

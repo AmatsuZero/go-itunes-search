@@ -1,20 +1,19 @@
 package app
 
 import (
-	"os"
+	"encoding/json"
 	"fmt"
-	"time"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/go-pg/pg"
+	. "go-itunes-search"
 	"math"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
-	"encoding/json"
 	"text/template"
+	"time"
 )
-
-import "github.com/go-pg/pg"
-import "github.com/PuerkitoBio/goquery"
-import . "github.com/Vonng/go-itunes-search"
 
 /**************************************************************
 * struct:	App
@@ -24,7 +23,7 @@ import . "github.com/Vonng/go-itunes-search"
 // Some fields, like Platforms, InAppPurchase SiblingApps RelatedApps SupportSite & Reviews
 // could only be fetched from iTunes page. a parser adjust for CN Store is provided
 type App struct {
-	ID               int64        `sql:",pk"`
+	ID               int64 `sql:",pk"`
 	Name             string
 	URL              string
 	Icon             string
@@ -38,31 +37,31 @@ type App struct {
 	VendorURL        string
 	Copyright        string
 	GenreID          int64
-	GenreIDList      []int64    `pg:",array"`
+	GenreIDList      []int64 `pg:",array"`
 	Genre            string
-	GenreList        []string   `pg:",array"`
+	GenreList        []string `pg:",array"`
 	Icon60           string
 	Icon100          string
-	Price            int64      `sql:",notnull"`
+	Price            int64 `sql:",notnull"`
 	Currency         string
 	System           string
-	Features         []string   `pg:",array"`
-	Devices          []string   `pg:",array"`
-	Languages        []string   `pg:",array"`
-	Platforms        []string   `pg:",array"`
+	Features         []string `pg:",array"`
+	Devices          []string `pg:",array"`
+	Languages        []string `pg:",array"`
+	Platforms        []string `pg:",array"`
 	Rating           string
-	Reasons          []string   `pg:",array"`
+	Reasons          []string `pg:",array"`
 	Size             int64
 	CntRating        int64
 	AvgRating        float64
 	CntRatingCurrent int64
 	AvgRatingCurrent float64
-	VppDevice        bool       `sql:",notnull"`
-	GameCenter       bool       `sql:",notnull"`
-	Screenshots      []string   `pg:",array"`
-	InAppPurchase    []string   `pg:",array"`
-	SiblingApps      []int64    `pg:",array"`
-	RelatedApps      []int64    `pg:",array"`
+	VppDevice        bool     `sql:",notnull"`
+	GameCenter       bool     `sql:",notnull"`
+	Screenshots      []string `pg:",array"`
+	InAppPurchase    []string `pg:",array"`
+	SiblingApps      []int64  `pg:",array"`
+	RelatedApps      []int64  `pg:",array"`
 	SupportSites     string
 	Reviews          string
 	Description      string
@@ -71,7 +70,7 @@ type App struct {
 	ReleaseTime      time.Time
 	PublishTime      time.Time
 	CrawledTime      time.Time
-	tableName        struct{}    `sql:"apple"`
+	tableName        struct{} `sql:"apple"`
 }
 
 /**************************************************************
@@ -221,7 +220,7 @@ func NewApp(entry *Entry) (app *App) {
 // NewDetailedApp will parse extra info while omit error
 func NewDetailedApp(entry *Entry, country string) (app *App) {
 	app = NewApp(entry)
-	app.ParseExtras(country)
+	_ = app.ParseExtras(country)
 	return
 }
 
@@ -373,7 +372,6 @@ func (app *App) ParseExtras(country string) error {
 			platform["AppleTV"] = true
 		}
 	}
-
 
 	// infer iPhone,iPad,iPod support from Device
 	app.Devices = merge(app.Devices)
@@ -536,7 +534,7 @@ func removeEmpty(input []string) (output []string) {
 }
 
 // merge will merge two string slice & dedupe it
-func merge(source ... []string) ([]string) {
+func merge(source ...[]string) []string {
 	m := make(map[string]struct{}, len(source)*10)
 	for _, list := range source {
 		for _, item := range list {

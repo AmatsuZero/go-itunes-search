@@ -1,19 +1,22 @@
-package app
+package test
 
-import "testing"
-import . "github.com/Vonng/go-itunes-search"
-import "github.com/go-pg/pg"
+import (
+	"github.com/go-pg/pg"
+	. "go-itunes-search"
+	"go-itunes-search/app"
+	"testing"
+)
 
 // App Specific API
 func TestNewApp(t *testing.T) {
 	entry, _ := Lookup().ID(989673964).Result()
-	NewDetailedApp(entry, "CN").Print()
+	app.NewDetailedApp(entry, "CN").Print()
 }
 
 // Test US Store
 func TestEntry_DetailUS(t *testing.T) {
 	entry, _ := Lookup().Country(US).ID(1061097588).Result()
-	NewDetailedApp(entry, "US").Print()
+	app.NewDetailedApp(entry, "US").Print()
 }
 
 func TestApp_Save(t *testing.T) {
@@ -31,7 +34,7 @@ func TestApp_Save(t *testing.T) {
 	}
 
 	for _, id := range idList {
-		app, err := NewAppByID(id, "CN")
+		app, err := app.NewAppByID(id, "CN")
 		if err != nil {
 			t.Error(err)
 		}
