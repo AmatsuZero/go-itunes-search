@@ -7,6 +7,7 @@ import (
 	"github.com/go-pg/pg"
 	. "go-itunes-search"
 	"math"
+	"net/http"
 	"os"
 	"sort"
 	"strconv"
@@ -70,7 +71,7 @@ type App struct {
 	ReleaseTime      time.Time
 	PublishTime      time.Time
 	CrawledTime      time.Time
-	tableName        struct{} `sql:"apple"`
+	TableName        struct{} `sql:"apple"`
 }
 
 /**************************************************************
@@ -136,8 +137,8 @@ const appTemplateStr = `
 var appTmpl, _ = template.New("app").Parse(appTemplateStr)
 
 // Entry_Print will print human-readable entry
-func (self *App) Print() {
-	if err := appTmpl.Execute(os.Stdout, self); err != nil {
+func (app *App) Print() {
+	if err := appTmpl.Execute(os.Stdout, app); err != nil {
 		fmt.Println(err.Error())
 	}
 	return
@@ -333,7 +334,14 @@ func (app *App) ParseExtras(country string) error {
 		app.ID,
 	)
 
-	doc, err := goquery.NewDocument(url)
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return err
 	}
@@ -543,7 +551,7 @@ func merge(source ...[]string) []string {
 	}
 	dst := make([]string, len(m))
 	cnt := 0
-	for k, _ := range m {
+	for k := range m {
 		dst[cnt] = k
 		cnt += 1
 	}

@@ -34,11 +34,11 @@ func TestApp_Save(t *testing.T) {
 	}
 
 	for _, id := range idList {
-		app, err := app.NewAppByID(id, "CN")
+		appByID, err := app.NewAppByID(id, "CN")
 		if err != nil {
 			t.Error(err)
 		}
-		err = app.Save(Pg)
+		err = appByID.Save(Pg)
 		if err != nil {
 			t.Error(err)
 		}

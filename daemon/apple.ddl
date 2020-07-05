@@ -1,54 +1,55 @@
 ---------------------------------------------------------------
 -- App container
 ---------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS apple (
-  id                 BIGINT PRIMARY KEY,
-  name               TEXT,
-  url                TEXT,
-  icon               TEXT,
-  kind               TEXT,
-  version            TEXT,
-  bundle_id          TEXT,
-  author_id          BIGINT,
-  author_name        TEXT,
-  author_url         TEXT,
-  vendor_name        TEXT,
-  vendor_url         TEXT,
-  copyright          TEXT,
-  genre_id           BIGINT,
-  genre_id_list      BIGINT [],
-  genre              TEXT,
-  genre_list         TEXT [],
-  icon60             TEXT,
-  icon100            TEXT,
-  price              BIGINT,
-  currency           TEXT,
-  system             TEXT,
-  features           TEXT [],
-  devices            TEXT [],
-  languages          TEXT [],
-  platforms          TEXT [],
-  rating             TEXT,
-  reasons            TEXT [],
-  size               BIGINT,
-  cnt_rating         BIGINT,
-  avg_rating         NUMERIC,
-  cnt_rating_current BIGINT,
-  avg_rating_current NUMERIC,
-  vpp_device         BOOLEAN,
-  game_center        BOOLEAN,
-  screenshots        TEXT [],
-  in_app_purchase    TEXT [],
-  sibling_apps       BIGINT [],
-  related_apps       BIGINT [],
-  support_sites      JSONB,
-  reviews            JSONB,
-  extra              JSONB,
-  description        TEXT,
-  release_notes      TEXT,
-  release_time       TIMESTAMPTZ,
-  publish_time       TIMESTAMPTZ,
-  crawled_time       TIMESTAMPTZ
+CREATE TABLE IF NOT EXISTS apple
+(
+    id                 BIGINT PRIMARY KEY,
+    name               TEXT,
+    url                TEXT,
+    icon               TEXT,
+    kind               TEXT,
+    version            TEXT,
+    bundle_id          TEXT,
+    author_id          BIGINT,
+    author_name        TEXT,
+    author_url         TEXT,
+    vendor_name        TEXT,
+    vendor_url         TEXT,
+    copyright          TEXT,
+    genre_id           BIGINT,
+    genre_id_list      BIGINT[],
+    genre              TEXT,
+    genre_list         TEXT[],
+    icon60             TEXT,
+    icon100            TEXT,
+    price              BIGINT,
+    currency           TEXT,
+    system             TEXT,
+    features           TEXT[],
+    devices            TEXT[],
+    languages          TEXT[],
+    platforms          TEXT[],
+    rating             TEXT,
+    reasons            TEXT[],
+    size               BIGINT,
+    cnt_rating         BIGINT,
+    avg_rating         NUMERIC,
+    cnt_rating_current BIGINT,
+    avg_rating_current NUMERIC,
+    vpp_device         BOOLEAN,
+    game_center        BOOLEAN,
+    screenshots        TEXT[],
+    in_app_purchase    TEXT[],
+    sibling_apps       BIGINT[],
+    related_apps       BIGINT[],
+    support_sites      JSONB,
+    reviews            JSONB,
+    extra              JSONB,
+    description        TEXT,
+    release_notes      TEXT,
+    release_time       TIMESTAMPTZ,
+    publish_time       TIMESTAMPTZ,
+    crawled_time       TIMESTAMPTZ
 );
 
 
@@ -107,35 +108,45 @@ COMMENT ON COLUMN apple.crawled_time IS '抓取时间';
 -- Task Queue
 ---------------------------------------------------------------
 -- DROP TABLE apple_queue;
-CREATE TABLE IF NOT EXISTS apple_queue (
-  id TEXT PRIMARY KEY
+CREATE TABLE IF NOT EXISTS apple_queue
+(
+    id TEXT PRIMARY KEY
 );
 COMMENT ON TABLE apple_queue IS 'Apple Task Queue';
 -----------------------------------------
 -- Function: add apple id to queue
 CREATE OR REPLACE FUNCTION apple_aid(_id BIGINT)
-  RETURNS VOID AS
-$$BEGIN INSERT INTO apple_queue (id) VALUES ('!' || _id :: TEXT);
-END;$$
-LANGUAGE plpgsql VOLATILE;
+    RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO apple_queue (id) VALUES ('!' || _id :: TEXT);
+END;
+$$
+    LANGUAGE plpgsql VOLATILE;
 COMMENT ON FUNCTION apple_aid(BIGINT) IS '向苹果队列中添加iTunesID任务';
 -- SELECT apple_aid(1031569344)
 -----------------------------------------
 -- Function: add apple bundle id to queue
 CREATE OR REPLACE FUNCTION apple_bid(_id TEXT)
-  RETURNS VOID AS
-$$BEGIN INSERT INTO apple_queue (id) VALUES ('@' || _id);
-END;$$
-LANGUAGE plpgsql VOLATILE;
+    RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO apple_queue (id) VALUES ('@' || _id);
+END;
+$$
+    LANGUAGE plpgsql VOLATILE;
 COMMENT ON FUNCTION apple_bid(TEXT) IS '向苹果队列中添加BundleID任务';
 -- SELECT apple_bid('com.tencent.xin');
 -----------------------------------------
 -- Function: add search keyword to queue
 CREATE OR REPLACE FUNCTION apple_key(keyword TEXT)
-  RETURNS VOID AS
-$$BEGIN INSERT INTO apple_queue (id) VALUES ('#' || keyword);
-END;$$
-LANGUAGE plpgsql VOLATILE;
+    RETURNS VOID AS
+$$
+BEGIN
+    INSERT INTO apple_queue (id) VALUES ('#' || keyword);
+END;
+$$
+    LANGUAGE plpgsql VOLATILE;
 COMMENT ON FUNCTION apple_key(TEXT) IS '向苹果队列中添加关键词任务';
 -- SELECT apple_key('蛤蛤');
 -----------------------------------------

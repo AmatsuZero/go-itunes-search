@@ -49,73 +49,73 @@ func SearchOne(term string) Params {
 * Chain Method
 **************************************************************/
 
-func (self Params) SetParam(k, v string) Params {
-	self.Values.Set(k, v)
-	return self
+func (p Params) SetParam(k, v string) Params {
+	p.Values.Set(k, v)
+	return p
 }
 
-func (self Params) Term(term string) Params {
-	self.Values.Set("term", term)
-	return self
+func (p Params) Term(term string) Params {
+	p.Values.Set("term", term)
+	return p
 }
 
-func (self Params) Terms(terms []string) Params {
-	self.Values.Set("term", strings.Join(terms, "+"))
-	return self
+func (p Params) Terms(terms []string) Params {
+	p.Values.Set("term", strings.Join(terms, "+"))
+	return p
 }
 
-func (self Params) Country(country string) Params {
-	self.Values.Set("country", country)
-	return self
+func (p Params) Country(country string) Params {
+	p.Values.Set("country", country)
+	return p
 }
 
-func (self Params) Entity(entity string) Params {
-	self.Values.Set("entity", entity)
-	return self
+func (p Params) Entity(entity string) Params {
+	p.Values.Set("entity", entity)
+	return p
 }
 
-func (self Params) Entities(entities []string) Params {
-	self.Values["entity"] = entities
-	return self
+func (p Params) Entities(entities []string) Params {
+	p.Values["entity"] = entities
+	return p
 }
 
-func (self Params) AddEntity(entity string) Params {
-	self.Values.Add("entity", entity)
-	return self
+func (p Params) AddEntity(entity string) Params {
+	p.Values.Add("entity", entity)
+	return p
 }
 
-func (self Params) Media(media string) Params {
-	self.Values.Set("media", media)
-	return self
+func (p Params) Media(media string) Params {
+	p.Values.Set("media", media)
+	return p
 }
 
-func (self Params) Medias(medias []string) Params {
-	self.Values["media"] = medias
-	return self
+func (p Params) Medias(medias []string) Params {
+	p.Values["media"] = medias
+	return p
 }
 
-func (self Params) AddMedia(media string) Params {
-	self.Values.Add("media", media)
-	return self
+func (p Params) AddMedia(media string) Params {
+	p.Values.Add("media", media)
+	return p
 }
 
-func (self Params) ID(id int64) Params {
-	self.Values.Set(ITunesID, strconv.FormatInt(id, 10))
-	return self
+func (p Params) ID(id int64) Params {
+	p.Values.Set(ITunesID, strconv.FormatInt(id, 10))
+	return p
 }
 
-func (self Params) BundleID(bundleID string) Params {
-	self.Values.Set(BundleID, bundleID)
-	return self
+func (p Params) BundleID(bundleID string) Params {
+	p.Values.Set(BundleID, bundleID)
+	return p
 }
 
 // App: restrict to application
-func (self Params) App() Params {
-	self.Values.Set("media", Software)
-	return self
+func (p Params) App() Params {
+	p.Values.Set("media", Software)
+	return p
 }
 
-func (self Params) Limit(n int) Params {
+func (p Params) Limit(n int) Params {
 	if n > 200 {
 		n = 200
 	}
@@ -123,8 +123,8 @@ func (self Params) Limit(n int) Params {
 	if n < 1 {
 		n = 1
 	}
-	self.Values.Set("limit", strconv.Itoa(n))
-	return self
+	p.Values.Set("limit", strconv.Itoa(n))
+	return p
 }
 
 /**************************************************************
@@ -132,14 +132,16 @@ func (self Params) Limit(n int) Params {
 **************************************************************/
 
 // Results will finally do the request
-func (self Params) Results() ([]Entry, error) {
-	res, err := http.Get(self.endpoint + self.Encode())
+func (p Params) Results() ([]Entry, error) {
+	res, err := http.Get(p.endpoint + p.Encode())
 	if err != nil {
 		return nil, err
 	}
 
 	lr := new(iTunesResult)
-	defer res.Body.Close()
+	defer func() {
+		_ = res.Body.Close()
+	}()
 	if err = json.NewDecoder(res.Body).Decode(lr); err != nil {
 		return nil, err
 	}
@@ -152,8 +154,8 @@ func (self Params) Results() ([]Entry, error) {
 }
 
 // Result assert there's one result
-func (self Params) Result() (*Entry, error) {
-	if entries, err := self.Results(); err != nil {
+func (p Params) Result() (*Entry, error) {
+	if entries, err := p.Results(); err != nil {
 		return nil, err
 	} else {
 		return &(entries[0]), nil

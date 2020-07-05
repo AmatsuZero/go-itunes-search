@@ -3,22 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/olekukonko/tablewriter"
+	. "go-itunes-search"
+	. "go-itunes-search/app"
 	"os"
 	"strconv"
 )
-
-import . "github.com/Vonng/go-itunes-search"
-import . "github.com/Vonng/go-itunes-search/app"
-import "github.com/olekukonko/tablewriter"
 
 // flags
 var (
 	itunesID string
 	bundleID string
 	keywords string
-	nResult  int    = 10
-	country  string = CN
-	detail   bool   = false
+	nResult  = 10
+	country  = CN
+	detail   = false
 	list     bool
 )
 
